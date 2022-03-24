@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -90,17 +91,38 @@ public class newRobotTest {
         assertEquals("Did not enter a value", outputStream.toString().strip());
 
         outputStream.reset();
+        robotController.executeCommands("M 0");
+        assertEquals("Did not move forward, enter a value greater than zero", outputStream.toString().strip());
+
+        outputStream.reset();
         robotController.executeCommands("M 2");
         String currentPos = "Position: 0, 2 - Pen: Up - Facing: North";
         robotController.printPosition();
         assertEquals(currentPos, outputStream.toString().strip());
+    }
+
+    @Test
+    @Disabled
+    void quitTest(){
+        robotController.executeCommands("q");
+    }
+
+    @Test
+    void printFloorTest(){
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+        robotController.executeCommands("I 3");
+        robotController.executeCommands("P");
+        String expectedOutput = "";
+        assertEquals(expectedOutput.strip(), outputStream.toString().strip());
     }
     
     @Test
     void printInstructionsTest() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));
-        var expectedOutput = "Enter command or enter Q or q to stop the program or enter the following accepted commands"+"\n"
+        robotController.printInstructions();
+        String expectedOutput = "Enter command or enter Q or q to stop the program or enter the following accepted commands"+"\n"
         +"[U|u] for Pen up "+"\n"
         +"[D|d] for Pen down "+"\n"
         +"[R|r] to Turn right "+"\n"
@@ -110,7 +132,14 @@ public class newRobotTest {
         +"[C|c] Print current position of the pen and whether it is up or down and its facing direction"+"\n"
         +"[I n|i n] Initialize the system: The values of the array floor are zeros and the robot is back to [0, 0], pen up and facing north. n size of the array, an integer greater than zero ";
         assertEquals(expectedOutput.strip(), outputStream.toString().strip());
-    } 
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"a", "b", "z", "s"})
+    void invalidCommandTest() {
+        String expected = "NORTH";
+        assertEquals(expected, robotController.getFacingDirection());
+    }
 
     @Test
     void getFacingDirectionTest() {

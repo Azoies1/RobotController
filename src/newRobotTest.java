@@ -19,6 +19,7 @@ public class newRobotTest {
 
     RobotController robotController;
     final String expectedOob = "outside the boundaries of the floor, enter a valid number";
+    final String invalidCommand = "Invalid command: This command does not exists";
 
     @BeforeEach
     void setup(){
@@ -50,7 +51,7 @@ public class newRobotTest {
 
         robotController.executeCommands("R");
         assertEquals("SOUTH",robotController.getFacingDirection());
-        
+
         robotController.executeCommands("R");
         assertEquals("WEST",robotController.getFacingDirection());
 
@@ -68,7 +69,7 @@ public class newRobotTest {
 
         robotController.executeCommands("L");
         assertEquals("SOUTH",robotController.getFacingDirection());
-        
+
         robotController.executeCommands("L");
         assertEquals("EAST",robotController.getFacingDirection());
 
@@ -116,7 +117,7 @@ public class newRobotTest {
         String expectedOutput = "";
         assertEquals(expectedOutput.strip(), outputStream.toString().strip());
     }
-    
+
     @Test
     void printInstructionsTest() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -136,9 +137,12 @@ public class newRobotTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"a", "b", "z", "s"})
-    void invalidCommandTest() {
-        String expected = "NORTH";
-        assertEquals(expected, robotController.getFacingDirection());
+    void invalidCommandTest(String command) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+        robotController.executeCommands(command);
+        assertEquals(invalidCommand.strip(), outputStream.toString().strip());
+        outputStream.reset();
     }
 
     @Test

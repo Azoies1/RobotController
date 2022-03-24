@@ -2,8 +2,10 @@
 //import org.junit.Before;
 //import org.junit.Rule;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -75,9 +77,9 @@ public class newRobotTest {
 
     @Test
     @DisplayName("Move tests")
-    void moveTests(){
+    void moveTests() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream (outputStream));
+        System.setOut(new PrintStream(outputStream));
 
         robotController.executeCommands("I 4");
         robotController.executeCommands("M 5");
@@ -85,14 +87,14 @@ public class newRobotTest {
 
         outputStream.reset();
         robotController.executeCommands("M");
-        assertEquals("Did no enter a value", outputStream.toString().strip());
+        assertEquals("Did not enter a value", outputStream.toString().strip());
 
         outputStream.reset();
         robotController.executeCommands("M 2");
         String currentPos = "Position: 0, 2 - Pen: Up - Facing: North";
         robotController.printPosition();
         assertEquals(currentPos, outputStream.toString().strip());
-
+    }
     
     @Test
     void printInstructionsTest() {
@@ -107,7 +109,7 @@ public class newRobotTest {
         +"[P|p] Print the N by N array and display the indices"+"\n"
         +"[C|c] Print current position of the pen and whether it is up or down and its facing direction"+"\n"
         +"[I n|i n] Initialize the system: The values of the array floor are zeros and the robot is back to [0, 0], pen up and facing north. n size of the array, an integer greater than zero ";
-        assertEquals(expectedOutput.strip(), output.toString().strip());
+        assertEquals(expectedOutput.strip(), outputStream.toString().strip());
     } 
 
     @Test

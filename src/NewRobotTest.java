@@ -15,7 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.api.Test;
 
 
-public class newRobotTest {
+public class NewRobotTest {
 
     RobotController robotController;
     final String expectedOob = "outside the boundaries of the floor, enter a valid number";
@@ -78,28 +78,57 @@ public class newRobotTest {
     }
 
     @Test
-    @DisplayName("Move tests")
-    void moveTests() {
+    @DisplayName("Move tests - Valid input")
+    void moveTestValidInput() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));
-
-        robotController.executeCommands("I 4");
-        robotController.executeCommands("M 5");
-        assertEquals(expectedOob.strip(), outputStream.toString().strip());
-
-        outputStream.reset();
-        robotController.executeCommands("M");
-        assertEquals("Did not enter a value", outputStream.toString().strip());
-
-        outputStream.reset();
-        robotController.executeCommands("M 0");
-        assertEquals("Did not move forward, enter a value greater than zero", outputStream.toString().strip());
-
-        outputStream.reset();
+        robotController.executeCommands("I 5");
         robotController.executeCommands("M 2");
         String currentPos = "Position: 0, 2 - Pen: Up - Facing: North";
         robotController.printPosition();
         assertEquals(currentPos, outputStream.toString().strip());
+    }
+
+    @Test
+    @DisplayName("Move test - Negative number")
+    void moveTestNegativeNumber() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+        String expectedOutput = "Did not move forward, enter a value greater than zero";
+        robotController.executeCommands("I 4");
+        robotController.executeCommands("M -5");
+        assertEquals(expectedOutput.strip(), outputStream.toString().strip());
+    }
+
+    @Test
+    @DisplayName("Move test - missing second argument")
+    void moveTestMissingSecondArgument() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+        robotController.executeCommands("I 4");
+        robotController.executeCommands("M");
+        assertEquals("Did not enter a value", outputStream.toString().strip());
+    }
+
+    @Test
+    @DisplayName("Move test - move out of bounds")
+    void moveTestOutOfBounds() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+        robotController.executeCommands("I 4");
+        robotController.executeCommands("M 5");
+        assertEquals(expectedOob.strip(), outputStream.toString().strip());
+    }
+
+    @Test
+    @DisplayName("Move test - zero spaces")
+    void moveTestZeroSpace() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+        String expectedOutput = "Did not move forward, enter a value greater than zero";
+        robotController.executeCommands("I 4");
+        robotController.executeCommands("M 0");
+        assertEquals(expectedOutput.strip(), outputStream.toString().strip());
     }
 
     @Test
@@ -124,14 +153,14 @@ public class newRobotTest {
         System.setOut(new PrintStream(outputStream));
         robotController.printInstructions();
         String expectedOutput = "Enter command or enter Q or q to stop the program or enter the following accepted commands"+"\n"
-        +"[U|u] for Pen up "+"\n"
-        +"[D|d] for Pen down "+"\n"
-        +"[R|r] to Turn right "+"\n"
-        +"[L|l] to Turn left "+"\n"
-        +"[M s|m s] to Move forward s spaces "+"\n"
-        +"[P|p] Print the N by N array and display the indices"+"\n"
-        +"[C|c] Print current position of the pen and whether it is up or down and its facing direction"+"\n"
-        +"[I n|i n] Initialize the system: The values of the array floor are zeros and the robot is back to [0, 0], pen up and facing north. n size of the array, an integer greater than zero ";
+                +"[U|u] for Pen up "+"\n"
+                +"[D|d] for Pen down "+"\n"
+                +"[R|r] to Turn right "+"\n"
+                +"[L|l] to Turn left "+"\n"
+                +"[M s|m s] to Move forward s spaces "+"\n"
+                +"[P|p] Print the N by N array and display the indices"+"\n"
+                +"[C|c] Print current position of the pen and whether it is up or down and its facing direction"+"\n"
+                +"[I n|i n] Initialize the system: The values of the array floor are zeros and the robot is back to [0, 0], pen up and facing north. n size of the array, an integer greater than zero ";
         assertEquals(expectedOutput.strip(), outputStream.toString().strip());
     }
 
@@ -213,7 +242,7 @@ public class newRobotTest {
 
         //initialize field
         robotController.executeCommands("I 4");
-        
+
         //North
         robotController.executeCommands("M 5");
         assertEquals(expectedOob.strip(), outputStream.toString().strip());
@@ -223,7 +252,7 @@ public class newRobotTest {
         robotController.printPosition();
         assertEquals(currentPos, outputStream.toString().strip());
         outputStream.reset();
-        
+
         //East
         robotController.executeCommands("R");
         robotController.executeCommands("M 5");
@@ -234,7 +263,7 @@ public class newRobotTest {
         robotController.printPosition();
         assertEquals(currentPos, outputStream.toString().strip());
         outputStream.reset();
-        
+
         //South
         robotController.executeCommands("R");
         robotController.executeCommands("M 5");
@@ -245,7 +274,7 @@ public class newRobotTest {
         robotController.printPosition();
         assertEquals(currentPos, outputStream.toString().strip());
         outputStream.reset();
-        
+
         //West
         robotController.executeCommands("R");
         robotController.executeCommands("M 5");
@@ -256,5 +285,34 @@ public class newRobotTest {
         robotController.printPosition();
         assertEquals(currentPos, outputStream.toString().strip());
         outputStream.reset();
+    }
+
+    @Test
+    @DisplayName("initializeFloor() with arraySize 5 - data flow test")
+    void initializeFloorTestValidArraySizeDataFlowCoverage() {
+        robotController.executeCommands("I 5");
+        assertEquals(robotController.getFloor().length, 5);
+    }
+
+    @Test
+    @DisplayName("initializeFloor() with arraySize 0 - data flow test")
+    void initializeFloorTestInvalidArraySizeDataFlowCoverage() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+        String expected = "Cannot initialize array, enter a value greater than zero";
+
+        robotController.executeCommands("I 0");
+
+        assertEquals(expected.strip(), outputStream.toString().strip());
+        assertThrows(NullPointerException.class, () -> robotController.getFloor());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"U", "D", "R", "L", "M 3", "P", "C"})
+    void nonInitializedFloorTests(String command) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+        robotController.executeCommands(command);
+        assertEquals("", outputStream.toString().strip());
     }
 }

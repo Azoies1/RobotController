@@ -205,7 +205,7 @@ public class newRobotTest {
     }
 
     @Test
-    @DisplayName("Condition coverage on can move forward")
+    @DisplayName("moveForwardTest() Condition Coverage")
     void moveForwardTest() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));

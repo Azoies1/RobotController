@@ -204,4 +204,57 @@ public class newRobotTest {
         assertEquals(expectedExceptionMessage.strip(), outputStream.toString().strip());
     }
 
+    @Test
+    @DisplayName("Condition coverage on can move forward")
+    void moveForwardTest() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+        String currentPos;
+
+        //initialize field
+        robotController.executeCommands("I 4");
+        
+        //North
+        robotController.executeCommands("M 5");
+        assertEquals(expectedOob.strip(), outputStream.toString().strip());
+        outputStream.reset();
+        robotController.executeCommands("M 2");
+        currentPos = "Position: 0, 2 - Pen: Up - Facing: North";
+        robotController.printPosition();
+        assertEquals(currentPos, outputStream.toString().strip());
+        outputStream.reset();
+        
+        //East
+        robotController.executeCommands("R");
+        robotController.executeCommands("M 5");
+        assertEquals(expectedOob.strip(), outputStream.toString().strip());
+        outputStream.reset();
+        robotController.executeCommands("M 2");
+        currentPos = "Position: 2, 2 - Pen: Up - Facing: East";
+        robotController.printPosition();
+        assertEquals(currentPos, outputStream.toString().strip());
+        outputStream.reset();
+        
+        //South
+        robotController.executeCommands("R");
+        robotController.executeCommands("M 5");
+        assertEquals(expectedOob.strip(), outputStream.toString().strip());
+        outputStream.reset();
+        robotController.executeCommands("M 2");
+        currentPos = "Position: 2, 0 - Pen: Up - Facing: South";
+        robotController.printPosition();
+        assertEquals(currentPos, outputStream.toString().strip());
+        outputStream.reset();
+        
+        //West
+        robotController.executeCommands("R");
+        robotController.executeCommands("M 5");
+        assertEquals(expectedOob.strip(), outputStream.toString().strip());
+        outputStream.reset();
+        robotController.executeCommands("M 2");
+        currentPos = "Position: 0, 0 - Pen: Up - Facing: West";
+        robotController.printPosition();
+        assertEquals(currentPos, outputStream.toString().strip());
+        outputStream.reset();
+    }
 }
